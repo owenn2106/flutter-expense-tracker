@@ -69,7 +69,6 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
