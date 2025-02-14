@@ -34,6 +34,12 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
+  void _removeExpense(String id) {
+    setState(() {
+      _registeredExpenses.removeWhere((expense) => expense.id == id);
+    });
+  }
+
   void _openAddExpenseForm() {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -60,7 +66,10 @@ class _ExpensesState extends State<Expenses> {
         children: [
           const Text("The Chart"),
           Expanded(
-            child: ExpensesList(expenses: _registeredExpenses),
+            child: ExpensesList(
+              expenses: _registeredExpenses,
+              removeExpense: _removeExpense,
+            ),
           ),
         ],
       ),
