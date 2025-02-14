@@ -34,10 +34,27 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
-  void _removeExpense(String id) {
+  void _removeExpense(Expense expense) {
+    final expenseIndex =
+        _registeredExpenses.indexWhere((expense) => expense.id == expense.id);
     setState(() {
-      _registeredExpenses.removeWhere((expense) => expense.id == id);
+      _registeredExpenses.removeWhere((expense) => expense.id == expense.id);
     });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text("Expense removed."),
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: "UNDO",
+          onPressed: () {
+            setState(() {
+              _registeredExpenses.insert(expenseIndex, expense);
+            });
+          },
+        ),
+      ),
+    );
   }
 
   void _openAddExpenseForm() {
