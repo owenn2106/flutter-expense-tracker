@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import "package:expense_tracker/models/expense.dart";
 
 class AddExpenseForm extends StatefulWidget {
-  const AddExpenseForm({super.key});
+  const AddExpenseForm(this.addNewExpense, {super.key});
+
+  final void Function(Expense) addNewExpense;
 
   @override
   State<AddExpenseForm> createState() {
@@ -15,6 +17,40 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
   Category? _selectedCategory = Category.leisure;
+
+  void submitForm() {
+    final title = _titleController.text;
+    final amount = double.tryParse(_amountController.text) ?? 0.0;
+    final amountIsInvalid = amount <= 0 || amount <= 0;
+    if (title.trim().isEmpty || amountIsInvalid || _selectedDate == null) {
+      showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: const Text("Invalid input"),
+            content: const Text("Please enter valid title, amount and date."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+    final newExpense = Expense(
+      title: title,
+      amount: amount,
+      category: _selectedCategory!,
+      date: _selectedDate!,
+    );
+    widget.addNewExpense(newExpense);
+    Navigator.pop(context);
+  }
 
   void _presentDatePicker() async {
     final now = DateTime.now();
@@ -41,7 +77,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
         child: Column(children: [
           TextField(
             controller: _titleController,
@@ -116,9 +152,7 @@ class _AddExpenseFormState extends State<AddExpenseForm> {
               ),
               const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () {
-                  print(_amountController.text);
-                },
+                onPressed: submitForm,
                 child: const Text("Add Expense"),
               ),
             ],
